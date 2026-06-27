@@ -1,1 +1,0 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/types.ts","./src/vite-env.d.ts","./src/components/categorytabs.tsx","./src/components/countup.tsx","./src/components/repocard.tsx","./src/components/repolist.tsx","./src/components/sourceswitcher.tsx","./src/lib/categories.ts","./src/lib/format.ts","./src/lib/userankings.ts"],"version":"5.9.3"}

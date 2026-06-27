@@ -1,0 +1,74 @@
+@import 'tailwindcss';
+
+/* ── 設計語彙(Taste / Motion）──
+   深色、克制、有辨識度的調性：墨黑底 + 冷色微光，避免制式 SaaS 漸層。
+   字級與間距走「呼吸感」，動效靠 Framer Motion，CSS 只放靜態 token。 */
+@theme {
+  --color-bg: #08080c;
+  --color-bg-soft: #0e0e16;
+  --color-surface: #13131d;
+  --color-surface-2: #1a1a27;
+  --color-border: #262633;
+  --color-ink: #f4f4f8;
+  --color-ink-soft: #b6b6c6;
+  --color-ink-faint: #71718a;
+  --color-accent: #7dd3fc;
+  --color-accent-2: #a78bfa;
+  --color-up: #4ade80;
+
+  --font-sans: 'Inter', 'Noto Sans TC', system-ui, -apple-system, 'PingFang TC',
+    'Microsoft JhengHei', sans-serif;
+
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03) inset,
+    0 12px 40px -12px rgba(0, 0, 0, 0.6);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 背景氛圍：兩團冷色暈光 + 細微噪點，營造深度而非平塗。 */
+.bg-aura::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(60% 50% at 18% 0%, rgba(125, 211, 252, 0.10), transparent 70%),
+    radial-gradient(50% 50% at 88% 12%, rgba(167, 139, 250, 0.10), transparent 70%);
+  pointer-events: none;
+}
+.bg-aura::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+::selection {
+  background: rgba(125, 211, 252, 0.25);
+}
+
+/* 細捲軸 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}

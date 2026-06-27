@@ -17,12 +17,14 @@ import { readFile, writeFile, mkdir, readdir, rm } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { fetchAllTrending } from './lib/trending.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const SNAP_DIR = join(ROOT, 'data', 'snapshots')
 const META_PATH = join(ROOT, 'data', 'repos-meta.json')
 const OUT_PATH = join(ROOT, 'public', 'data', 'rankings.json')
+const TRENDING_OUT_PATH = join(ROOT, 'public', 'data', 'trending.json')
 
 const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || ''
 const TIMEZONE = 'Asia/Taipei'
@@ -314,7 +316,24 @@ async function main() {
   await writeFile(META_PATH, JSON.stringify(meta, null, 0)) // bootstrap 可能補了 meta
   console.log(`→ 已輸出 ${OUT_PATH}`)
 
-  // 5) 清理過舊快照
+  // 5) GitHub 官方 Trending(獨立榜單，失敗不影響上面的輸出)
+  try {
+    console.log('→ 抓取 GitHub 官方 Trending…')
+    const trendingCategories = await fetchAllTrending()
+    await writeFile(
+      TRENDING_OUT_PATH,
+      JSON.stringify(
+        { updatedAt: now.toISOString(), timezone: TIMEZONE, categories: trendingCategories },
+        null,
+        2,
+      ),
+    )
+    console.log(`→ 已輸出 ${TRENDING_OUT_PATH}`)
+  } catch (err) {
+    console.warn(`! GitHub Trending 抓取失敗(保留既有資料)：${err.message}`)
+  }
+
+  // 6) 清理過舊快照
   await pruneSnapshots(snapshotDates, todayStr)
   console.log('=== 完成 ===\n')
 }

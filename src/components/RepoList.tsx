@@ -1,9 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import type { CategoryKey, RankedRepo } from '../types'
+import type { RankedRepo } from '../types'
 import { RepoCard } from './RepoCard'
 
 interface Props {
-  activeKey: CategoryKey
+  /** 用於觸發切換動畫的唯一鍵(來源+分類) */
+  activeKey: string
   repos: RankedRepo[]
   isDelta: boolean
 }

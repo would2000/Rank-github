@@ -1,31 +1,41 @@
 import { useEffect, useState } from 'react'
-import type { RankingsData } from '../types'
+import type { RankingsData, TrendingData } from '../types'
 
-type State =
+export type Resource<T> =
   | { status: 'loading' }
-  | { status: 'ready'; data: RankingsData }
+  | { status: 'ready'; data: T }
   | { status: 'error'; message: string }
 
-/** 載入 public/data/rankings.json(由 GitHub Action 每日產生) */
-export function useRankings(): State {
-  const [state, setState] = useState<State>({ status: 'loading' })
+/** 載入 public/data 下的 JSON(由 GitHub Action 每日產生) */
+function useJsonResource<T>(filename: string): Resource<T> {
+  const [state, setState] = useState<Resource<T>>({ status: 'loading' })
 
   useEffect(() => {
     let alive = true
-    const url = `${import.meta.env.BASE_URL}data/rankings.json`
+    const url = `${import.meta.env.BASE_URL}data/${filename}`
     fetch(url, { cache: 'no-cache' })
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json() as Promise<RankingsData>
+        return res.json() as Promise<T>
       })
       .then((data) => alive && setState({ status: 'ready', data }))
-      .catch((err) =>
-        alive && setState({ status: 'error', message: String(err?.message ?? err) }),
+      .catch(
+        (err) => alive && setState({ status: 'error', message: String(err?.message ?? err) }),
       )
     return () => {
       alive = false
     }
-  }, [])
+  }, [filename])
 
   return state
+}
+
+/** 星數成長榜(快照差異) */
+export function useRankings(): Resource<RankingsData> {
+  return useJsonResource<RankingsData>('rankings.json')
+}
+
+/** GitHub 官方 Trending */
+export function useTrending(): Resource<TrendingData> {
+  return useJsonResource<TrendingData>('trending.json')
 }

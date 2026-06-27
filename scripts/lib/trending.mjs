@@ -6,6 +6,7 @@
 // ──────────────────────────────────────────────────────────────────────────
 
 import * as cheerio from 'cheerio'
+import { classifyRepo } from './classify.mjs'
 
 const SINCE = [
   { key: 'daily', since: 'daily' },
@@ -54,6 +55,8 @@ function parseTrendingHtml(html) {
     const periodText = article.find('span.float-sm-right').first().text().trim()
     const delta = parseInteger(periodText)
 
+    const category = classifyRepo({ name, description, language })
+
     rows.push({
       rank: rows.length + 1,
       fullName,
@@ -66,6 +69,8 @@ function parseTrendingHtml(html) {
       delta,
       avatarUrl: `https://github.com/${owner}.png?size=88`,
       source: 'trending',
+      categoryKey: category.key,
+      categoryLabel: category.label,
     })
   })
 

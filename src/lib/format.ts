@@ -59,3 +59,26 @@ export function languageColor(lang: string | null): string {
   if (!lang) return '#71718a'
   return LANGUAGE_COLORS[lang] ?? '#9aa0c2'
 }
+
+/** 使用區域分類的色彩(對應 classify.mjs 的 key)，用於分類標籤底色/文字。 */
+export const CATEGORY_COLORS: Record<string, string> = {
+  ai: '#a78bfa',
+  web3: '#f59e0b',
+  security: '#ef4444',
+  devops: '#38bdf8',
+  data: '#22d3ee',
+  mobile: '#34d399',
+  frontend: '#f472b6',
+  backend: '#60a5fa',
+  os: '#94a3b8',
+  game: '#fb7185',
+  devtools: '#84cc16',
+  design: '#e879f9',
+  learning: '#fbbf24',
+  other: '#9aa0c2',
+}
+
+export function categoryColor(key: string | undefined): string {
+  if (!key) return '#9aa0c2'
+  return CATEGORY_COLORS[key] ?? '#9aa0c2'
+}

@@ -18,6 +18,7 @@ import { existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { fetchAllTrending } from './lib/trending.mjs'
+import { classifyRepo } from './lib/classify.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -126,6 +127,7 @@ function slimRepo(it) {
     stars: it.stargazers_count ?? 0,
     avatarUrl: it.owner?.avatar_url ?? '',
     createdAt: it.created_at ?? null,
+    topics: Array.isArray(it.topics) ? it.topics : [],
   }
 }
 
@@ -231,6 +233,12 @@ async function rankByBootstrap(todayStr, days, meta) {
 function enrich(row, meta, rank, source) {
   const m = meta[row.fullName] || {}
   const [owner, name] = row.fullName.split('/')
+  const category = classifyRepo({
+    name: m.name ?? name,
+    description: m.description ?? null,
+    language: m.language ?? null,
+    topics: m.topics ?? [],
+  })
   return {
     rank,
     fullName: row.fullName,
@@ -243,6 +251,8 @@ function enrich(row, meta, rank, source) {
     delta: row.delta,
     avatarUrl: m.avatarUrl || `https://github.com/${owner}.png`,
     source,
+    categoryKey: category.key,
+    categoryLabel: category.label,
   }
 }
 
@@ -273,6 +283,7 @@ async function main() {
       language: r.language,
       avatarUrl: r.avatarUrl,
       stars: r.stars,
+      topics: r.topics,
     }
   }
   await writeFile(

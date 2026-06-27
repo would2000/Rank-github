@@ -19,6 +19,10 @@ export interface RankedRepo {
    * 'trending'  = GitHub 官方 Trending
    */
   source: 'delta' | 'bootstrap' | 'trending'
+  /** 使用區域分類 key(用於配色) */
+  categoryKey?: string
+  /** 使用區域分類顯示名稱(繁中) */
+  categoryLabel?: string
 }
 
 export interface CategoryMeta {

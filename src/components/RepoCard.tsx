@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import type { RankedRepo } from '../types'
 import { CountUp } from './CountUp'
-import { languageColor } from '../lib/format'
+import { categoryColor, languageColor } from '../lib/format'
 
 interface Props {
   repo: RankedRepo
@@ -70,15 +70,29 @@ export function RepoCard({ repo, index, isDelta }: Props) {
         <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-[var(--color-ink-soft)]">
           {repo.description ?? '（此專案尚無描述）'}
         </p>
-        {repo.language && (
-          <div className="mt-2 flex items-center gap-1.5 text-xs text-[var(--color-ink-faint)]">
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-[var(--color-ink-faint)]">
+          {repo.language && (
+            <span className="flex items-center gap-1.5">
+              <span
+                className="inline-block h-2.5 w-2.5 rounded-full"
+                style={{ backgroundColor: languageColor(repo.language) }}
+              />
+              {repo.language}
+            </span>
+          )}
+          {repo.categoryLabel && (
             <span
-              className="inline-block h-2.5 w-2.5 rounded-full"
-              style={{ backgroundColor: languageColor(repo.language) }}
-            />
-            {repo.language}
-          </div>
-        )}
+              className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-medium"
+              style={{
+                color: categoryColor(repo.categoryKey),
+                borderColor: `${categoryColor(repo.categoryKey)}55`,
+                backgroundColor: `${categoryColor(repo.categoryKey)}14`,
+              }}
+            >
+              {repo.categoryLabel}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* 星數 + 本期新增 */}
